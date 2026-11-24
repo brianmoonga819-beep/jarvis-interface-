@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#020914">
+
+<title>JARVIS AI</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+
+ margin:0;background:radial-gradient(circle,#102d48,#020710 70%);
+
+ color:#d9f5ff;font-family:Arial,sans-serif;
+
+ min-height:100vh;text-align:center;
+
+}
+
+header{padding:28px 15px 5px}
+
+h1{letter-spacing:9px;color:#54dfff;font-size:30px}
+
+.status{color:#67eaff;font-size:12px;letter-spacing:3px}
+
+.clock{font-size:24px;margin-top:20px}
+
+.core{
+
+ width:230px;height:230px;border:2px solid #29cfff;
+
+ border-radius:50%;margin:38px auto;
+
+ display:flex;align-items:center;justify-content:center;
+
+ box-shadow:0 0 18px #00bfff, inset 0 0 25px #087eaa;
+
+ animation:pulse 3s infinite;
+
+}
+
+.core span{font-size:55px;color:#65eaff}
+
+@keyframes pulse{
+
+ 50%{box-shadow:0 0 35px #00cfff,inset 0 0 40px #087eaa}
+
+}
+
+button{
+
+ background:#09263c;border:1px solid #31cfff;
+
+ color:#8eeaff;padding:14px 22px;
+
+ border-radius:30px;font-size:15px;margin:7px;
+
+}
+
+button:active{background:#17628a}
+
+#response{
+
+ margin:25px auto;padding:18px;
+
+ width:88%;min-height:75px;
+
+ border:1px solid #176b91;border-radius:12px;
+
+ color:#bcefff;line-height:1.6;
+
+}
+
+input{
+
+ background:#061727;border:1px solid #238bb5;
+
+ color:white;padding:14px;border-radius:10px;
+
+ width:68%;font-size:15px;
+
+}
+
+footer{font-size:11px;color:#527d94;padding:30px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+ <div class="status">PERSONAL AI SYSTEM</div>
+
+ <h1>J.A.R.V.I.S</h1>
+
+ <div class="status">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+
+ <div class="clock" id="clock">00:00:00</div>
+
+</header>
+
+<div class="core"><span>◉</span></div>
+
+<div class="status" id="status">SYSTEM ONLINE</div>
+
+<div id="response">
+
+ Good evening. JARVIS is ready. How may I assist you?
+
+</div>
+
+<button onclick="listen()">🎙 SPEAK TO JARVIS</button>
+
+<button onclick="speak('At your service, Sir.')">🔊 TEST VOICE</button>
+
+<div style="margin-top:20px">
+
+ <input id="command" placeholder="Enter a command...">
+
+ <button onclick="sendCommand()">SEND</button>
+
+</div>
+
+<footer>JARVIS AI INTERFACE · IPHONE EDITION</footer>
+
+<script>
+
+function updateClock(){
+
+ document.getElementById("clock").textContent=
+
+ new Date().toLocaleTimeString("en-GB");
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+function speak(text){
+
+ if(!window.speechSynthesis)return;
+
+ speechSynthesis.cancel();
+
+ let msg=new SpeechSynthesisUtterance(text);
+
+ msg.lang="en-GB";
+
+ msg.rate=0.9;
+
+ msg.pitch=0.85;
+
+ let voices=speechSynthesis.getVoices();
+
+ let british=voices.find(v=>v.lang==="en-GB");
+
+ if(british)msg.voice=british;
+
+ speechSynthesis.speak(msg);
+
+}
+
+function reply(text){
+
+ document.getElementById("response").textContent=text;
+
+ speak(text);
+
+}
+
+function sendCommand(){
+
+ let input=document.getElementById("command");
+
+ let text=input.value.trim().toLowerCase();
+
+ if(!text)return;
+
+ input.value="";
+
+ processCommand(text);
+
+}
+
+function processCommand(text){
+
+ if(text.includes("hello")||text.includes("hi")){
+
+ reply("Hello Sir. JARVIS is at your service.");
+
+ }
+
+ else if(text.includes("time")){
+
+ reply("The time is "+new Date().toLocaleTimeString("en-GB"));
+
+ }
+
+ else if(text.includes("date")){
+
+ reply("Today is "+new Date().toDateString());
+
+ }
+
+ else if(text.includes("who are you")){
+
+ reply("I am JARVIS, your personal digital assistant.");
+
+ }
+
+ else if(text.includes("how are you")){
+
+ reply("All systems are functioning normally, Sir.");
+
+ }
+
+ else if(text.includes("help")){
+
+ reply("You can ask me for the time, date, or introduce yourself.");
+
+ }
+
+ else{
+
+ reply("I heard you, Sir. This command needs a connected AI service to process.");
+
+ }
+
+}
+
+function listen(){
+
+ const SpeechRecognition=
+
+ window.SpeechRecognition||window.webkitSpeechRecognition;
+
+ if(!SpeechRecognition){
+
+ reply("Voice recognition is not supported in this browser. Please use the text command box.");
+
+ return;
+
+ }
+
+ let recognition=new SpeechRecognition();
+
+ recognition.lang="en-GB";
+
+ recognition.onstart=()=>{
+
+ document.getElementById("status").textContent="LISTENING...";
+
+ };
+
+ recognition.onresult=(event)=>{
+
+ processCommand(event.results[0][0].transcript);
+
+ };
+
+ recognition.onerror=()=>{
+
+ document.getElementById("status").textContent="SYSTEM ONLINE";
+
+ reply("I could not hear you clearly, Sir.");
+
+ };
+
+ recognition.onend=()=>{
+
+ document.getElementById("status").textContent="SYSTEM ONLINE";
+
+ };
+
+ recognition.start();
+
+}
+
+</script>
+
+</body>
+
+</html>
